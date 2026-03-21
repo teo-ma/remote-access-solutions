@@ -1,0 +1,7 @@
+{
+  "azure.cloud": "AzureChinaCloud",
+  "terminal.integrated.env.osx": {
+    "AZURE_CLOUD_NAME": "AzureChinaCloud",
+    "ARM_ENVIRONMENT": "china"
+  }
+}

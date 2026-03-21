@@ -1,0 +1,18 @@
+在azure 21v创建一个avd服务。我要做一个demo，验证avd的private link。avd的客户端使用Azure上一个windows vm（使用windows11 OS，用来模拟avd的客户端，我会安装windwos app），这个vm使用全部私有网络（vnet）连接到AVD，连接方式使用avd private link，avd中有一个host 虚拟机（也使用windows 11）。全部网络使用私有网络连接。avd的host虚拟机后端再连接一个linux vm，这个linux vm不在avd中，linux vm用来部署一个nginx（模拟应用服务器端）
+
+帮我生成一个架构图，需求如下：
+
+1.客户从办公室的瘦客户端（深圳或大连）通过SDWAN访问Azure 21V AVD上的Windows session host（Azure China North 3），
+2.AVD服务部署在Azure China East 2。
+3.这个Session Host 后端通过vnet连接的业务应用部署在Azure China East 2.
+4.要求访问全程使用私有网络。客户办公室网络与Azure China East 2已经通过SDWAN连接。客户在Azure China East 2的业务应用与部署在Azure China North 3的AVD的Session Host（Windows VM）通过Vnet Peering 连接。
+5.生成的架构图标出从客户端到服务端应用访问流程的序号，并通过文字描述。
+6.生成一个Readme文件，包含架构图和访问流程描述的文字，用英文。
+
+
+
+再创建一个markdown 文件，帮我生成一个架构图，需求如下：
+
+1.客户网络环境不变，将AVD环境移除，瘦客户端直接连接北三的vm，不使用AVD服务。
+2.包含架构图（包括访问流程序号）和访问流程描述的文字，用英文。
+3.文字描述，包括使用AVD与不使用AVD（瘦客户端直接RDP连接windows vm的区别）
