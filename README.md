@@ -48,13 +48,13 @@ flowchart TB
     SDWAN -. "⑧ RDP Shortpath" .-> SZ
     SDWAN -. "⑧ RDP Shortpath" .-> DL
 
-    style EntraID fill:#fff9c4,stroke:#f57f17,stroke-width:2px
-    style OnPrem fill:#e8f4e8,stroke:#2d6a2d,stroke-width:2px
-    style AzureCE2 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style AzureCN3 fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style AVD_CP fill:#bbdefb,stroke:#1565c0,stroke-width:1px
-    style BizVNet fill:#b3e5fc,stroke:#0277bd,stroke-width:1px
-    style SHVNet fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+    style EntraID fill:#f9a825,stroke:#e65100,stroke-width:2px,color:#000
+    style OnPrem fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff
+    style AzureCE2 fill:#1565c0,stroke:#0d47a1,stroke-width:2px,color:#fff
+    style AzureCN3 fill:#e65100,stroke:#bf360c,stroke-width:2px,color:#fff
+    style AVD_CP fill:#1e88e5,stroke:#1565c0,stroke-width:1px,color:#fff
+    style BizVNet fill:#0277bd,stroke:#01579b,stroke-width:1px,color:#fff
+    style SHVNet fill:#ef6c00,stroke:#e65100,stroke-width:1px,color:#fff
 ```
 
 ## Components
