@@ -30,7 +30,17 @@ flowchart TB
     end
 
     subgraph AzureCN3["☁️ Azure China North 3"]
-        SH["🖥️ Session Host<br/>(Windows VM)"]
+        direction TB
+        subgraph SH_VNet["Session Host VNet · 10.20.0.0/16"]
+            direction TB
+            SH["🖥️ Session Host<br/>(Windows VM)"]
+            PEER["🔗 VNet Peering ↔ China East 2"]
+        end
+        subgraph SH_Infra["Network & DNS"]
+            direction LR
+            DNS["🔒 Private DNS Zone<br/>privatelink.wvd.azure.cn"]
+            NSG["🛡️ NSG · Allow UDP 3390"]
+        end
     end
 
     EntraID["🌐 Azure Entra ID<br/>(Public Endpoint)"]
