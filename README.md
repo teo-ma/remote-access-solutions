@@ -10,67 +10,45 @@ This architecture demonstrates a fully private network connectivity solution for
 flowchart TB
     subgraph OnPrem["🏢 On-Premises Offices"]
         direction LR
-        SZ["🖥️ Thin Clients<br/>(Shenzhen)<br/>🔒 10.1.1.0/24"]
-        DL["🖥️ Thin Clients<br/>(Dalian)<br/>🔒 10.2.1.0/24"]
+        SZ["🖥️ Thin Clients<br/>(Shenzhen)"]
+        DL["🖥️ Thin Clients<br/>(Dalian)"]
     end
 
     SDWAN(("🔒 SD-WAN<br/>Private Network"))
 
     subgraph AzureCE2["☁️ Azure China East 2"]
-        direction TB
-        GW["🔗 VNet Gateway · SD-WAN Hub"]
+        direction LR
         subgraph AVD_CP["AVD Control Plane · Private Link"]
             direction LR
             PE_WS["🔗 Private Endpoint<br/>Workspace · Feed Discovery"]
             PE_HP["🔗 Private Endpoint<br/>Host Pool · RDP Connection"]
         end
-        subgraph BizVNet["Business Application VNet · 10.10.0.0/16"]
-            APP["🖧 Business Application Server"]
+        subgraph BizVNet["Business Application VNet"]
+            APP["🖧 Business<br/>Application Server"]
         end
+        GW["🔗 VNet Gateway<br/>(SD-WAN Hub)"]
     end
 
     subgraph AzureCN3["☁️ Azure China North 3"]
-        direction TB
-        subgraph SH_VNet["Session Host VNet · 10.20.0.0/16"]
-            direction TB
-            SH["🖥️ Session Host<br/>(Windows VM)"]
-            PEER["🔗 VNet Peering ↔ China East 2"]
-        end
-        subgraph SH_Infra["Network & DNS"]
-            direction LR
-            DNS["🔒 Private DNS Zone<br/>privatelink.wvd.azure.cn"]
-            NSG["🛡️ NSG · Allow UDP 3390"]
+        subgraph SHVNet["Session Host VNet"]
+            SH["🖥️ Windows Session Host<br/>(Windows VM)"]
         end
     end
 
     EntraID["🌐 Azure Entra ID<br/>(Public Endpoint)"]
 
-    SZ -- "① Entra ID Auth<br/>⚠️ Public Internet" --> EntraID
-    DL -- "① Entra ID Auth<br/>⚠️ Public Internet" --> EntraID
-    EntraID -- "② Auth Token Returned<br/>⚠️ Public Internet" --> SZ
-    EntraID -- "② Auth Token Returned<br/>⚠️ Public Internet" --> DL
-    SZ -- "③ With Token · SD-WAN" --> SDWAN
-    DL -- "③ With Token · SD-WAN" --> SDWAN
-    SDWAN -- "③ SD-WAN Transit" --> GW
-    GW -- "④ Feed Discovery<br/>(Workspace Private Endpoint)" --> PE_WS
-    PE_WS -- "⑤ RDP Session Request<br/>(Host Pool Private Endpoint)" --> PE_HP
-    PE_HP -- "⑥ RDP Reverse Connect" --> SH
-    SH -- "⑦ Access Backend App<br/>(VNet Peering)" --> APP
-    APP -- "⑧ Return Data<br/>(VNet Peering)" --> SH
-    SH -- "⑨ RDP Shortpath · UDP<br/>(VNet Peering CN3 → CE2)" --> GW
-    GW -- "⑨ SD-WAN Transit" --> SDWAN
-    SDWAN -- "⑨ RDP Shortpath" --> SZ
-    SDWAN -- "⑨ RDP Shortpath" --> DL
-
-    linkStyle 0 stroke:#f9a825,stroke-width:3px,stroke-dasharray:5
-    linkStyle 1 stroke:#f9a825,stroke-width:3px,stroke-dasharray:5
-    linkStyle 2 stroke:#f9a825,stroke-width:3px,stroke-dasharray:5
-    linkStyle 3 stroke:#f9a825,stroke-width:3px,stroke-dasharray:5
-    linkStyle 6 stroke:#00c853,stroke-width:3px
-    linkStyle 12 stroke:#ff6d00,stroke-width:3px
-    linkStyle 13 stroke:#ff6d00,stroke-width:3px
-    linkStyle 14 stroke:#ff6d00,stroke-width:3px
-    linkStyle 15 stroke:#ff6d00,stroke-width:3px
+    SZ -- "① Initiate Connection" --> SDWAN
+    DL -- "① Initiate Connection" --> SDWAN
+    SDWAN -- "② SD-WAN Private Transit" --> EntraID
+    EntraID -- "③ Auth Token Issued" --> PE_WS
+    PE_WS -- "④ Feed Discovery" --> PE_HP
+    PE_HP -- "⑤ RDP Reverse Connect" --> SH
+    SH -- "⑥ Access Backend App<br/>(VNet Peering)" --> APP
+    APP -- "⑦ Return Data<br/>(VNet Peering)" --> SH
+    SH -. "⑧ RDP Shortpath · UDP<br/>(VNet Peering CN3 → CE2)" .-> GW
+    GW -. "⑧ SD-WAN Transit<br/>(Bypasses AVD Control Plane)" .-> SDWAN
+    SDWAN -. "⑧ RDP Shortpath" .-> SZ
+    SDWAN -. "⑧ RDP Shortpath" .-> DL
 
     style EntraID fill:#f9a825,stroke:#e65100,stroke-width:2px,color:#000
     style OnPrem fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff
@@ -78,6 +56,7 @@ flowchart TB
     style AzureCN3 fill:#e65100,stroke:#bf360c,stroke-width:2px,color:#fff
     style AVD_CP fill:#1e88e5,stroke:#1565c0,stroke-width:1px,color:#fff
     style BizVNet fill:#0277bd,stroke:#01579b,stroke-width:1px,color:#fff
+    style SHVNet fill:#ef6c00,stroke:#e65100,stroke-width:1px,color:#fff
     style GW fill:#0d47a1,stroke:#01579b,stroke-width:2px,color:#fff
 ```
 
@@ -97,41 +76,37 @@ flowchart TB
 
 ## Access Flow (End-to-End)
 
-### ① Entra ID Authentication (Public Internet)
+### ① Client Initiates Connection
 
-Users at the **Shenzhen** or **Dalian** office launch the **Windows App** (AVD client) on their thin client devices. The client first authenticates with **Azure Entra ID** (formerly Azure Active Directory). Entra ID is a **public-facing identity service** — its authentication endpoints are only available over the **public internet**. The thin client reaches Entra ID's public endpoint (`login.partner.microsoftonline.cn`) directly from the office internet egress to perform OAuth 2.0 / OpenID Connect authentication.
+Users at the **Shenzhen** or **Dalian** office launch the **Windows App** (AVD client) on their thin client devices. The client begins the connection process to access their virtual desktop.
 
-> **⚠️ Important**: Azure Entra ID does not support private endpoints. Authentication traffic to `login.partner.microsoftonline.cn` (Azure China) **must** traverse the public internet. This is the **only segment** in the entire architecture that requires public network access. Organizations should ensure that firewall and proxy rules allow outbound HTTPS (port 443) to Entra ID endpoints from the office network.
+### ② SD-WAN Private Transit to Azure & Entra ID Authentication
 
-### ② Auth Token Returned to Client (Public Internet)
+The connection request is routed through the enterprise **SD-WAN** network, which provides private, encrypted connectivity from the office locations toward Azure. Before accessing AVD resources, the client must authenticate with **Azure Entra ID** (formerly Azure Active Directory). Entra ID is a **public-facing identity service** — its authentication endpoints are only available over the **public internet**. The thin client reaches Entra ID's public endpoint to perform OAuth 2.0 / OpenID Connect authentication and obtain an access token.
 
-After successful authentication, Entra ID issues an **OAuth 2.0 access token** back to the AVD client over the **public internet**. The client now holds the token needed to access AVD private resources.
+> **⚠️ Important**: Azure Entra ID does not support private endpoints. Authentication traffic to `login.partner.microsoftonline.cn` (Azure China) **must** traverse the public internet. This is the **only segment** in the entire architecture that requires public network access. Organizations should ensure that firewall and proxy rules on the SD-WAN allow outbound HTTPS (port 443) to Entra ID endpoints.
 
-### ③ Client Connects to Azure via SD-WAN (Private)
+### ③ Auth Token Issued & Feed Discovery via Workspace Private Endpoint
 
-Armed with the authentication token, the AVD client's subsequent traffic is routed through the enterprise **SD-WAN** network, which provides private, encrypted connectivity from the office locations to Azure. The connection passes through the **VNet Gateway (SD-WAN Hub)** in Azure China East 2. From this point forward, **all traffic remains on private networks**.
+After successful authentication, Entra ID issues an **OAuth 2.0 access token** to the AVD client. Armed with this token, the client connects to the **Workspace Private Endpoint** in Azure China East 2 over the **private SD-WAN path**. Through this private endpoint, the client performs **feed discovery** — presenting the token and retrieving the list of available AVD resources (desktop sessions, remote apps) assigned to the user.
 
-### ④ Feed Discovery via Workspace Private Endpoint (Private)
+### ④ Feed Discovery & Resource Selection
 
-Through the VNet Gateway, the client connects to the **Workspace Private Endpoint** in Azure China East 2. The client presents the OAuth token and performs **feed discovery** — retrieving the list of available AVD resources (desktop sessions, remote apps) assigned to the user. The user selects the desired desktop resource to initiate an RDP session.
+The client retrieves the workspace feed through the Workspace Private Endpoint and presents the available desktops and applications to the user. The user selects the desired desktop resource to initiate an RDP session. The client then contacts the **Host Pool Private Endpoint** to begin session establishment.
 
-### ⑤ RDP Session Request via Host Pool Private Endpoint (Private)
+### ⑤ RDP Session via Host Pool Private Endpoint (Reverse Connect)
 
-After the user selects a desktop resource, the client contacts the **Host Pool Private Endpoint** to begin session establishment.
+After the user selects a desktop resource, the initial RDP session is established through the **Host Pool Private Endpoint** in Azure China East 2. AVD uses **reverse connect** technology — the session host in China North 3 maintains an outbound connection to the AVD gateway, and the RDP session is tunneled back through this path via the private endpoint. This ensures the session host does not require any inbound connectivity.
 
-### ⑥ RDP Reverse Connect to Session Host (Private)
-
-The initial RDP session is established through the **Host Pool Private Endpoint** in Azure China East 2. AVD uses **reverse connect** technology — the session host in China North 3 maintains an outbound connection to the AVD gateway, and the RDP session is tunneled back through this path via the private endpoint. This ensures the session host does not require any inbound connectivity.
-
-### ⑦ Session Host Accesses Backend Business Application (Private)
+### ⑥ Session Host Accesses Backend Business Application
 
 Once the user is working within the **Windows Session Host** (China North 3), they can access backend **business applications** deployed in Azure China East 2. This traffic flows over **cross-region VNet Peering** between the Session Host VNet (China North 3) and the Business Application VNet (China East 2), remaining entirely within Azure's private backbone network.
 
-### ⑧ Backend Application Returns Data (Private)
+### ⑦ Backend Application Returns Data
 
 The **Business Application Server** in China East 2 processes the request and returns data back to the **Session Host** in China North 3 over the same **VNet Peering** connection. The response traffic stays fully private on the Azure backbone.
 
-### ⑨ RDP Shortpath — Direct Streaming to Client (Private, Bypasses AVD Control Plane)
+### ⑧ RDP Shortpath — Direct Streaming to Client (Bypasses AVD Control Plane)
 
 Once the initial RDP session is established, the session host negotiates **RDP Shortpath for managed networks**. This creates a **UDP-based connection** from the Session Host (China North 3), traversing **VNet Peering** to China East 2, then through the **VNet Gateway (SD-WAN Hub)** in China East 2 and the enterprise **SD-WAN** network to reach the thin client at the office. This path completely **bypasses the AVD control plane** in China East 2. Note: there is **no direct SD-WAN connectivity** between China North 3 and the on-premises offices — traffic must transit through China East 2. This provides:
 - **Lower latency**: Eliminates the extra hop through the AVD gateway.
@@ -142,11 +117,10 @@ Once the initial RDP session is established, the session host negotiates **RDP S
 
 | Segment | Connection Type | Privacy |
 |---|---|---|
-| Client → Azure Entra ID (Auth) | HTTPS to public endpoint (direct internet) | ⚠️ Public (required) |
-| Entra ID → Client (Token) | HTTPS response over public internet | ⚠️ Public (required) |
-| Client → Azure (with Token) | SD-WAN | ✅ Private |
-| VNet Gateway → AVD Workspace | Private Endpoint | ✅ Private |
-| AVD Workspace → AVD Host Pool | Private Endpoint | ✅ Private |
+| Office → Azure (SD-WAN) | SD-WAN | ✅ Private |
+| Client → Azure Entra ID | HTTPS to public endpoint | ⚠️ Public (required) |
+| Client → AVD Workspace | Private Endpoint | ✅ Private |
+| Client → AVD Host Pool | Private Endpoint | ✅ Private |
 | AVD Gateway → Session Host | Reverse Connect (initial setup) | ✅ Private |
 | Session Host → Business App | VNet Peering (cross-region) | ✅ Private |
 | Business App → Session Host | VNet Peering (cross-region) | ✅ Private |
@@ -167,4 +141,4 @@ Once the initial RDP session is established, the session host negotiates **RDP S
 
 5. **RDP Shortpath for Managed Networks**: After the initial session is established via reverse connect, the session host negotiates a direct UDP path (RDP Shortpath). Since there is no direct SD-WAN connectivity from China North 3, the shortpath traffic traverses VNet Peering from China North 3 to China East 2, then exits through the VNet Gateway (SD-WAN Hub) in China East 2 and onto the SD-WAN back to the client. This bypasses the AVD gateway for ongoing desktop streaming, reducing latency and improving user experience while maintaining full private network connectivity.
 
-6. **Azure Entra ID — Public Endpoint Requirement**: Azure Entra ID (formerly Azure AD) serves as the identity provider for AVD authentication. Unlike AVD workspace and host pool resources, Entra ID **does not support private endpoints** — its authentication endpoints (`login.partner.microsoftonline.cn` for Azure China) are exclusively available over the public internet. The AVD client authenticates **directly from the office network to Entra ID via public internet** — this traffic does **not** flow through the SD-WAN or VNet Gateway. This is the only component in the architecture that requires public network access. Network security policies must allow outbound HTTPS (TCP 443) from the office network to Entra ID endpoints. All subsequent AVD operations (feed discovery, RDP sessions, data access) flow through the SD-WAN to Azure and remain fully private after the authentication token is obtained.
+6. **Azure Entra ID — Public Endpoint Requirement**: Azure Entra ID (formerly Azure AD) serves as the identity provider for AVD authentication. Unlike AVD workspace and host pool resources, Entra ID **does not support private endpoints** — its authentication endpoints (`login.partner.microsoftonline.cn` for Azure China) are exclusively available over the public internet. This is the only component in the architecture that requires public network access. Network security policies must allow outbound HTTPS (TCP 443) from the client network to Entra ID endpoints. All subsequent AVD operations (feed discovery, RDP sessions, data access) remain fully private after the authentication token is obtained.

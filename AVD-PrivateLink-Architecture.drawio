@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" modified="2026-03-24T00:00:00.000Z" agent="AVD-PrivateLink" version="24.0.0" type="device">
+  <diagram name="AVD Private Link Architecture" id="avd-privatelink-arch">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- TITLE -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="title" value="&lt;b&gt;Azure Virtual Desktop — Private Link Architecture&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#666&quot;&gt;End-to-end private connectivity via SD-WAN + AVD Private Link | Azure China (21Vianet)&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=16;fontColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="700" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- ON-PREMISES OFFICES (green group) -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="onprem" value="🏢 On-Premises Offices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;strokeWidth=3;fontColor=#FFFFFF;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;arcSize=10;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="80" width="180" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="sz" value="🖥️ Thin Clients&lt;br&gt;(Shenzhen)&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;🔒 10.1.1.0/24&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#388E3C;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=9;" vertex="1" parent="onprem">
+          <mxGeometry x="15" y="40" width="150" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="dl" value="🖥️ Thin Clients&lt;br&gt;(Dalian)&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;🔒 10.2.1.0/24&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#388E3C;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=9;" vertex="1" parent="onprem">
+          <mxGeometry x="15" y="140" width="150" height="75" as="geometry"/>
+        </mxCell>
+        <!-- Internet egress label -->
+        <mxCell id="inet_label" value="&lt;font style=&quot;font-size:8px;color:#666&quot;&gt;Office Internet&lt;br&gt;Egress&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="onprem">
+          <mxGeometry x="25" y="230" width="130" height="30" as="geometry"/>
+        </mxCell>
+        <!-- SD-WAN label in onprem -->
+        <mxCell id="sdwan_label_op" value="&lt;font style=&quot;font-size:8px;color:#FFFFFF&quot;&gt;SD-WAN&lt;br&gt;Access&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="onprem">
+          <mxGeometry x="25" y="280" width="130" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- AZURE ENTRA ID (yellow, top) -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="entra" value="🌐 Azure Entra ID&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;⚠️ Public Endpoint&lt;br&gt;login.partner.microsoftonline.cn&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F9A825;strokeColor=#E65100;strokeWidth=2;fontColor=#000000;fontSize=10;fontStyle=1;arcSize=15;" vertex="1" parent="1">
+          <mxGeometry x="240" y="15" width="220" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SD-WAN (circle) -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="sdwan" value="🔒&lt;br&gt;SD-WAN&lt;br&gt;Private&lt;br&gt;Network" style="ellipse;whiteSpace=wrap;html=1;fillColor=#006000;strokeColor=#1B5E20;strokeWidth=2;fontColor=#FFFFFF;fontSize=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="280" width="100" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- AZURE CHINA EAST 2 (blue group) -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="ce2" value="☁️ Azure China East 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;strokeWidth=3;fontColor=#FFFFFF;fontSize=12;fontStyle=1;verticalAlign=top;spacingTop=5;arcSize=8;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="80" width="380" height="530" as="geometry"/>
+        </mxCell>
+
+        <!-- VNet Gateway -->
+        <mxCell id="gw" value="🔗 VNet Gateway · SD-WAN Hub" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0D47A1;strokeColor=#01579B;strokeWidth=2;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="ce2">
+          <mxGeometry x="30" y="35" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- AVD Control Plane sub-group -->
+        <mxCell id="avd_cp" value="AVD Control Plane · Private Link" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1565C0;strokeWidth=1;fontColor=#FFFFFF;fontSize=9;fontStyle=1;verticalAlign=top;spacingTop=3;arcSize=10;container=1;collapsible=0;" vertex="1" parent="ce2">
+          <mxGeometry x="20" y="95" width="340" height="160" as="geometry"/>
+        </mxCell>
+        <!-- PE Workspace -->
+        <mxCell id="pe_ws" value="🔗 Private Endpoint&lt;br&gt;&lt;b&gt;Workspace&lt;/b&gt;&lt;br&gt;Feed Discovery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42A5F5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="avd_cp">
+          <mxGeometry x="10" y="30" width="155" height="110" as="geometry"/>
+        </mxCell>
+        <!-- PE Host Pool -->
+        <mxCell id="pe_hp" value="🔗 Private Endpoint&lt;br&gt;&lt;b&gt;Host Pool&lt;/b&gt;&lt;br&gt;RDP Connection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#42A5F5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="avd_cp">
+          <mxGeometry x="175" y="30" width="155" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Business App VNet sub-group -->
+        <mxCell id="biz" value="Business App VNet · 10.10.0.0/16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0277BD;strokeColor=#01579B;strokeWidth=1;fontColor=#FFFFFF;fontSize=9;fontStyle=1;verticalAlign=top;spacingTop=3;arcSize=10;container=1;collapsible=0;" vertex="1" parent="ce2">
+          <mxGeometry x="20" y="275" width="340" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="app" value="🖧 Business Application Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#039BE5;strokeColor=#0277BD;fontColor=#FFFFFF;fontSize=9;" vertex="1" parent="biz">
+          <mxGeometry x="30" y="30" width="280" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- VNet Peering (CE2 side) -->
+        <mxCell id="peer_ce2" value="🔗 VNet Peering ↔ China North 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#01579B;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="ce2">
+          <mxGeometry x="40" y="395" width="300" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- Private DNS Zone (CE2 side) -->
+        <mxCell id="dns_ce2" value="🔒 Private DNS Zone · privatelink.wvd.azure.cn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#01579B;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="ce2">
+          <mxGeometry x="40" y="445" width="300" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- NSG (CE2 side) -->
+        <mxCell id="nsg_ce2" value="🛡️ NSG · Firewall Rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#01579B;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="ce2">
+          <mxGeometry x="40" y="490" width="300" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- AZURE CHINA NORTH 3 (orange group) -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="cn3" value="☁️ Azure China North 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E65100;strokeColor=#BF360C;strokeWidth=3;fontColor=#FFFFFF;fontSize=12;fontStyle=1;verticalAlign=top;spacingTop=5;arcSize=8;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="840" y="80" width="380" height="530" as="geometry"/>
+        </mxCell>
+
+        <!-- Session Host VNet -->
+        <mxCell id="sh_vnet" value="Session Host VNet · 10.20.0.0/16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;strokeWidth=1;fontColor=#FFFFFF;fontSize=9;fontStyle=1;verticalAlign=top;spacingTop=3;arcSize=10;container=1;collapsible=0;" vertex="1" parent="cn3">
+          <mxGeometry x="15" y="35" width="350" height="180" as="geometry"/>
+        </mxCell>
+        <!-- Session Host VM -->
+        <mxCell id="sh" value="🖥️ Session Host VM&lt;br&gt;Desktop &amp; RemoteApp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F47B13;strokeColor=#E65100;strokeWidth=1;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="sh_vnet">
+          <mxGeometry x="20" y="30" width="310" height="55" as="geometry"/>
+        </mxCell>
+        <!-- VNet Peering (CN3 side) -->
+        <mxCell id="peer_cn3" value="🔗 VNet Peering ↔ China East 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF6C00;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="sh_vnet">
+          <mxGeometry x="20" y="100" width="310" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- Private DNS Zone (CN3) -->
+        <mxCell id="dns_cn3" value="🔒 Private DNS Zone · privatelink.wvd.azure.cn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BF360C;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="cn3">
+          <mxGeometry x="30" y="235" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- NSG -->
+        <mxCell id="nsg_cn3" value="🛡️ NSG · Outbound Rules · Allow UDP 3390" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BF360C;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="cn3">
+          <mxGeometry x="30" y="290" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- RDP Shortpath -->
+        <mxCell id="shortpath_cn3" value="⚡ RDP Shortpath · UDP 3390 · Managed Networks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F47B13;strokeColor=#BF360C;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="cn3">
+          <mxGeometry x="30" y="345" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Monitor -->
+        <mxCell id="monitor_cn3" value="📊 Azure Monitor · Log Analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BF360C;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="cn3">
+          <mxGeometry x="30" y="400" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Conditional Access -->
+        <mxCell id="ca_cn3" value="🔐 Conditional Access Policy · MFA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BF360C;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="cn3">
+          <mxGeometry x="30" y="455" width="320" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- CONNECTIONS -->
+        <!-- ══════════════════════════════════════════ -->
+
+        <!-- ① Client → Entra ID (dashed yellow, public) -->
+        <mxCell id="c01a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#F9A825;strokeWidth=2;dashed=1;dashPattern=8 4;endArrow=block;endFill=1;" edge="1" source="sz" target="entra" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c01a_label" value="&lt;font color=&quot;#E65100&quot; style=&quot;font-size:8px&quot;&gt;① Entra ID Auth&lt;br&gt;⚠️ Public Internet&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c01a">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <mxPoint x="15" y="-5" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="c01b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#F9A825;strokeWidth=2;dashed=1;dashPattern=8 4;endArrow=block;endFill=1;" edge="1" source="dl" target="entra" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c01b_label" value="&lt;font color=&quot;#E65100&quot; style=&quot;font-size:8px&quot;&gt;①&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c01b">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ② Entra ID → Client (dashed yellow, token returned) -->
+        <mxCell id="c02a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#F9A825;strokeWidth=2;dashed=1;dashPattern=8 4;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="entra" target="sz" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="43"/>
+              <mxPoint x="220" y="90"/>
+              <mxPoint x="110" y="90"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c02a_label" value="&lt;font color=&quot;#E65100&quot; style=&quot;font-size:8px&quot;&gt;② Token Returned&lt;br&gt;⚠️ Public&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c02a">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ③ Client → SD-WAN -->
+        <mxCell id="c03a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;" edge="1" source="sz" target="sdwan" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c03a_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;③ With Token&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c03a">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="c03b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;" edge="1" source="dl" target="sdwan" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ③ SD-WAN → VNet Gateway (green) -->
+        <mxCell id="c03c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#00C853;strokeWidth=3;endArrow=block;endFill=1;" edge="1" source="sdwan" target="gw" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c03c_label" value="&lt;font color=&quot;#00C853&quot; style=&quot;font-size:8px&quot;&gt;&lt;b&gt;③ SD-WAN Transit&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c03c">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ④ VNet Gateway → PE Workspace -->
+        <mxCell id="c04" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;" edge="1" source="gw" target="pe_ws" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c04_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;④ Feed Discovery&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c04">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑤ PE Workspace → PE Host Pool -->
+        <mxCell id="c05" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;" edge="1" source="pe_ws" target="pe_hp" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c05_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;⑤ Session Request&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c05">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑥ PE Host Pool → Session Host (Reverse Connect) -->
+        <mxCell id="c06" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;" edge="1" source="pe_hp" target="sh" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c06_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;⑥ RDP Reverse Connect&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c06">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑦ Session Host → App Server (VNet Peering) -->
+        <mxCell id="c07" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" edge="1" source="sh" target="app" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c07_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;⑦ VNet Peering&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c07">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑧ App Server → Session Host (Return Data) -->
+        <mxCell id="c08" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#1A73E8;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" source="app" target="sh" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c08_label" value="&lt;font color=&quot;#1A73E8&quot; style=&quot;font-size:8px&quot;&gt;⑧ Return Data&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c08">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑨ RDP Shortpath: Session Host → VNet Gateway (orange) -->
+        <mxCell id="c09a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#FF6D00;strokeWidth=3;endArrow=block;endFill=1;exitX=0;exitY=0.2;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="sh" target="gw" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="126"/>
+              <mxPoint x="820" y="135"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c09a_label" value="&lt;font color=&quot;#D50000&quot; style=&quot;font-size:8px&quot;&gt;&lt;b&gt;⑨ RDP Shortpath · UDP&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c09a">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑨ VNet Gateway → SD-WAN (orange) -->
+        <mxCell id="c09b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#FF6D00;strokeWidth=3;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" source="gw" target="sdwan" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="135"/>
+              <mxPoint x="380" y="280"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c09b_label" value="&lt;font color=&quot;#D50000&quot; style=&quot;font-size:8px&quot;&gt;&lt;b&gt;⑨ SD-WAN&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="c09b">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ⑨ SD-WAN → Client SZ (orange) -->
+        <mxCell id="c09c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#FF6D00;strokeWidth=3;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" source="sdwan" target="sz" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ⑨ SD-WAN → Client DL (orange) -->
+        <mxCell id="c09d" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jetSize=auto;html=1;strokeColor=#FF6D00;strokeWidth=3;endArrow=block;endFill=1;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" source="sdwan" target="dl" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- LEGEND -->
+        <!-- ══════════════════════════════════════════ -->
+        <mxCell id="legend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#BDBDBD;strokeWidth=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="630" width="360" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="25" y="635" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend line: yellow dashed = public auth -->
+        <mxCell id="leg1_line" style="endArrow=none;html=1;strokeColor=#F9A825;strokeWidth=2;dashed=1;dashPattern=8 4;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="670" as="sourcePoint"/>
+            <mxPoint x="80" y="670" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg1_text" value="&lt;font style=&quot;font-size:8px&quot;&gt;①② Entra ID Auth (⚠️ Public Internet)&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="85" y="660" width="250" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend line: blue = private flow -->
+        <mxCell id="leg2_line" style="endArrow=none;html=1;strokeColor=#1A73E8;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="692" as="sourcePoint"/>
+            <mxPoint x="80" y="692" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg2_text" value="&lt;font style=&quot;font-size:8px&quot;&gt;③~⑧ Private Connection Flow&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="85" y="682" width="250" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend line: orange = shortpath -->
+        <mxCell id="leg3_line" style="endArrow=none;html=1;strokeColor=#FF6D00;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="714" as="sourcePoint"/>
+            <mxPoint x="80" y="714" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg3_text" value="&lt;font style=&quot;font-size:8px&quot;&gt;⑨ RDP Shortpath (UDP · Private)&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="85" y="704" width="250" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend line: green = SD-WAN -->
+        <mxCell id="leg4_line" style="endArrow=none;html=1;strokeColor=#00C853;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="736" as="sourcePoint"/>
+            <mxPoint x="80" y="736" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg4_text" value="&lt;font style=&quot;font-size:8px&quot;&gt;SD-WAN Private Transit&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="85" y="726" width="250" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
